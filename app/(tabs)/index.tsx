@@ -45,7 +45,39 @@ function SignupScreen({ navigation }: any) {
       );`
       );
     }
-  })
+
+    initDB();
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!Username || !Password || !retypePassword) {
+      alert('Please fill all fields');
+      return
+    }
+
+    if (Password !== retypePassword) {
+      alert("Passwords don't match");
+      return;
+    }
+
+    try {
+      await db.executeSqlAsync(
+        'INSERT INTO users (username, password) VALUES (?, ?)',
+        [Username, Password]
+      );
+
+      alert('User signed up successfully');
+      setUsername('');
+      setPassword('');
+      setretypePassword('');
+
+    } catch (error: any) {
+    if (error.message.includes('UNIQUE')) {
+      alert('Username already exists');
+    }
+  }
+  }; 
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Username:</Text>
