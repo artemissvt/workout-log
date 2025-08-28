@@ -1,6 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as SQLite from 'expo-sqlite';
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -24,18 +26,34 @@ function AccountScreen({ navigation }: any) {
 }
 
 function SignupScreen({ navigation }: any) {
-  const [regularText, setRegularText] = useState('');
+  const [Username, setUsername] = useState('');
   const [Password, setPassword] = useState('');
   const [retypePassword, setretypePassword] = useState('');
 
+  const [db, setDb] = useState<any>(null);
+
+  React.useEffect(() => {
+    async function initDB() {
+      const database = SQLite.openDatabaseAsync('userdata.db');
+      setDb(database);
+
+      await db.executeSqlAsync(
+        `CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        password TEXT
+      );`
+      );
+    }
+  })
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Username:</Text>
       <TextInput
         style={styles.input}
         placeholder=" "
-        value={regularText}
-        onChangeText={setRegularText}
+        value={Username}
+        onChangeText={setUsername}
       />
       <Text style={styles.label}>Password:</Text>
       <TextInput
@@ -57,10 +75,7 @@ function SignupScreen({ navigation }: any) {
       <Button 
         title="Submit" 
         onPress={() => {
-          console.log('Username:', regularText);
-          console.log('Password:', Password);
-          console.log('Retype Password:', retypePassword);
-        }} 
+          /* insert into DB */  }} 
       />
     </View>
   );
