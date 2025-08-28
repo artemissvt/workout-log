@@ -1,10 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 const Stack = createNativeStackNavigator();
-
 
 function HomeScreen({ navigation }: any) {
   return (
@@ -19,29 +17,49 @@ function AccountScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Workout Log</Text>
-      <Button title="Log in" onPress={() => navigation.navigate("login")} />
+      <Button title="Log in" onPress={() => navigation.navigate("signup")} />
       <Button title="Back to Home" onPress={() => navigation.goBack()} />
     </View>
   );
 }
 
-function LoginScreen({ navigation }: any) {
+function SignupScreen({ navigation }: any) {
   const [regularText, setRegularText] = useState('');
+  const [Password, setPassword] = useState('');
+  const [retypePassword, setretypePassword] = useState('');
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Regular Field:</Text>
+      <Text style={styles.label}>Username:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter something"
+        placeholder=" "
         value={regularText}
         onChangeText={setRegularText}
+      />
+      <Text style={styles.label}>Password:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder=" "
+        secureTextEntry={true}   
+        value={Password}
+        onChangeText={setPassword}
+      />
+      <Text style={styles.label}>Retype Password:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder=" "
+        secureTextEntry={true}   
+        value={retypePassword}
+        onChangeText={setretypePassword}
       />
 
       <Button 
         title="Submit" 
         onPress={() => {
-          console.log('Regular Text:', regularText);
+          console.log('Username:', regularText);
+          console.log('Password:', Password);
+          console.log('Retype Password:', retypePassword);
         }} 
       />
     </View>
@@ -51,9 +69,9 @@ function LoginScreen({ navigation }: any) {
 export default function Index() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="home" component={HomeScreen} />
       <Stack.Screen name="account" component={AccountScreen} />
-      <Stack.Screen name="login" component={LoginScreen}/>
+      <Stack.Screen name="signup" component={SignupScreen}/>
     </Stack.Navigator>
   );
 }
