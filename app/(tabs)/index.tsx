@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SQLite from 'expo-sqlite';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 
@@ -10,7 +10,7 @@ function HomeScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>🏋️ Workout Log</Text>
-      <Button title="Login" onPress={() => navigation.navigate("account")} />
+      <Button title="Sign up" onPress={() => navigation.navigate("account")} />
     </View>
   );
 }
@@ -19,40 +19,39 @@ function AccountScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Workout Log</Text>
-      <Button title="Log in" onPress={() => navigation.navigate("signup")} />
+      <Button title="Sign up" onPress={() => navigation.navigate("signup")} />
       <Button title="Back to Home" onPress={() => navigation.goBack()} />
     </View>
   );
 }
 
-function SignupScreen({ navigation }: any) {
+export function SignupScreen({ navigation }: any) {
   const [Username, setUsername] = useState('');
   const [Password, setPassword] = useState('');
   const [retypePassword, setretypePassword] = useState('');
-
   const [db, setDb] = useState<any>(null);
 
-  React.useEffect(() => {
+   useEffect(() => {
     async function initDB() {
-      const database = SQLite.openDatabaseAsync('userdata.db');
+      const database = await SQLite.openDatabaseAsync("userdata.db");
       setDb(database);
 
-      await db.executeSqlAsync(
-        `CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE,
-        password TEXT
-      );`
-      );
+      await database.execAsync(`
+        CREATE TABLE users (
+          "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+          "username" TEXT UNIQUE,
+          "password" TEXT
+        );
+      `);
     }
 
     initDB();
   }, []);
 
   const handleSubmit = async () => {
-    if (!Username || !Password || !retypePassword) {
-      alert('Please fill all fields');
-      return
+    if (!setUsername || !setPassword || !retypePassword) {
+      alert("Please fill all fields");
+      return;
     }
 
     if (Password !== retypePassword) {
@@ -60,23 +59,30 @@ function SignupScreen({ navigation }: any) {
       return;
     }
 
+    if (!db) {
+      alert("Database not ready yet");
+      return;
+    }
+
     try {
-      await db.executeSqlAsync(
-        'INSERT INTO users (username, password) VALUES (?, ?)',
-        [Username, Password]
+      await db.runAsync(
+        "INSERT INTO users (username, password) VALUES (?, ?)",
+        [setUsername, setPassword]
       );
 
-      alert('User signed up successfully');
-      setUsername('');
-      setPassword('');
-      setretypePassword('');
+      alert("User signed up successfully");
 
+      setUsername("");
+      setPassword("");
+      setretypePassword("");
     } catch (error: any) {
-    if (error.message.includes('UNIQUE')) {
-      alert('Username already exists');
+      if (error.message.includes("UNIQUE")) {
+        alert("Username already exists");
+      } else {
+        alert("Error: " + error.message);
+      }
     }
-  }
-  }; 
+  };
 
   return (
     <View style={styles.container}>
@@ -104,14 +110,11 @@ function SignupScreen({ navigation }: any) {
         onChangeText={setretypePassword}
       />
 
-      <Button 
-        title="Submit" 
-        onPress={() => {
-          /* insert into DB */  }} 
-      />
+      <Button title="Submit" onPress={handleSubmit}/>
     </View>
   );
 }
+
 
 export default function Index() {
   return (
