@@ -3,7 +3,6 @@ import * as SQLite from 'expo-sqlite';
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
-
 const Stack = createNativeStackNavigator();
 
 function HomeScreen({ navigation }: any) {
@@ -37,19 +36,22 @@ export function SignupScreen({ navigation }: any) {
       setDb(database);
 
       await database.execAsync(`
-        CREATE TABLE users (
+        CREATE TABLE IF NOT EXISTS users (
           "id" INTEGER PRIMARY KEY AUTOINCREMENT,
           "username" TEXT UNIQUE,
           "password" TEXT
-        );
-      `);
+        );`
+    );
+
+      const firstRow = await db.getFirstAsync('SELECT * FROM users');
+      console.log(firstRow.id, firstRow.value, firstRow.intValue);
     }
 
     initDB();
   }, []);
 
   const handleSubmit = async () => {
-    if (!setUsername || !setPassword || !retypePassword) {
+    if (!Username || !Password || !retypePassword) {
       alert("Please fill all fields");
       return;
     }
@@ -67,7 +69,7 @@ export function SignupScreen({ navigation }: any) {
     try {
       await db.runAsync(
         "INSERT INTO users (username, password) VALUES (?, ?)",
-        [setUsername, setPassword]
+        [Username, Password]
       );
 
       alert("User signed up successfully");
@@ -84,6 +86,7 @@ export function SignupScreen({ navigation }: any) {
     }
   };
 
+  
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Username:</Text>
