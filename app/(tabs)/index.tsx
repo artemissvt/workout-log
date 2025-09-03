@@ -3,22 +3,30 @@ import * as SQLite from 'expo-sqlite';
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
+
 const Stack = createNativeStackNavigator();
 
+
 function HomeScreen({ navigation }: any) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>🏋️ Workout Log</Text>
-      <Button title="Sign up" onPress={() => navigation.navigate("account")} />
-    </View>
+   return (
+    <>
+      <View style={styles.containerTopleft}>
+        <Text style={styles.topLeft}>🏋️ Workout Log</Text>
+      </View>
+
+      <View style={styles.containerCenter}>
+        <Button title="Find Your Account" onPress={() => navigation.navigate("account")}/>
+      </View>
+    </>
   );
 }
 
 function AccountScreen({ navigation }: any) {
   return (
-    <View style={styles.container}>
+    <View style={styles.containerCenter}>
       <Text style={styles.title}>Your Workout Log</Text>
       <Button title="Sign up" onPress={() => navigation.navigate("signup")} />
+      <Button title="Log in" onPress={() => navigation.navigate("login")} />
       <Button title="Back to Home" onPress={() => navigation.goBack()} />
     </View>
   );
@@ -42,9 +50,6 @@ export function SignupScreen({ navigation }: any) {
           "password" TEXT
         );`
     );
-
-      const firstRow = await db.getFirstAsync('SELECT * FROM users');
-      console.log(firstRow.id, firstRow.value, firstRow.intValue);
     }
 
     initDB();
@@ -71,7 +76,8 @@ export function SignupScreen({ navigation }: any) {
         "INSERT INTO users (username, password) VALUES (?, ?)",
         [Username, Password]
       );
-
+      const rows = await db.getAllAsync("SELECT * FROM users;");
+      console.log("Users in DB:", rows);
       alert("User signed up successfully");
 
       setUsername("");
@@ -88,7 +94,7 @@ export function SignupScreen({ navigation }: any) {
 
   
   return (
-    <View style={styles.container}>
+    <View style={styles.containerCenter}>
       <Text style={styles.label}>Username:</Text>
       <TextInput
         style={styles.input}
@@ -118,6 +124,21 @@ export function SignupScreen({ navigation }: any) {
   );
 }
 
+function LoginScreen({ navigation }: any) {
+  return (
+    <View style={styles.containerCenter}>
+      <Button title="Log in" onPress={() => navigation.navigate("dashboard")} />
+    </View>
+  );
+}
+
+export function Dashboard() {
+  return (
+    <View style={styles.containerTopleft}>
+      <Text style={styles.topLeft}>Your Dashboard</Text>
+    </View>
+      );
+}
 
 export default function Index() {
   return (
@@ -125,17 +146,25 @@ export default function Index() {
       <Stack.Screen name="home" component={HomeScreen} />
       <Stack.Screen name="account" component={AccountScreen} />
       <Stack.Screen name="signup" component={SignupScreen}/>
+      <Stack.Screen name="login" component={LoginScreen}/>
+      <Stack.Screen name="dashboard" component={Dashboard}/>
     </Stack.Navigator>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
+  containerCenter: { 
     flex: 1, 
     justifyContent: "center", 
     alignItems: "center",
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 50,
+  },
+  containerTopleft: {
+    flex: 1,
+    justifyContent: "flex-start", 
+    alignItems: "flex-start",     
+    backgroundColor: "#fff",
   },
   title: { 
     fontSize: 24, 
@@ -157,6 +186,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: 5,
     marginBottom: 20,
+  },
+  topLeft: {
+    fontSize: 24,
+    fontWeight: "bold", 
+    margin: 20, 
+    backgroundColor: "#fff",
   },
 });
 
