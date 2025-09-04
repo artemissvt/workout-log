@@ -46,7 +46,7 @@ export default function TabLayout() {
         name="routines"
         options={{
           title: 'Routines',
-          tabBarIcon: ({ color, size }) => (<FontAwesome5 name="dumbbell" size={20} color={color} />),
+          tabBarIcon: ({ color }) => (<FontAwesome5 name="dumbbell" size={20} color={color} />),
         }}
       />
     </Tabs>

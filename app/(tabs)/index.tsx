@@ -11,24 +11,14 @@ function HomeScreen({ navigation }: any) {
    return (
     <>
       <View style={styles.containerTopleft}>
-        <Text style={styles.topLeft}>🏋️ Workout Log</Text>
+        <Text style={styles.topLeft}>Workout Log</Text>
       </View>
 
       <View style={styles.containerCenter}>
-        <Button title="Find Your Account" onPress={() => navigation.navigate("account")}/>
+        <Button title="Sign up" onPress={() => navigation.navigate("signup")} />
+        <Button title="Log in" onPress={() => navigation.navigate("login")} />
       </View>
     </>
-  );
-}
-
-function AccountScreen({ navigation }: any) {
-  return (
-    <View style={styles.containerCenter}>
-      <Text style={styles.title}>Your Workout Log</Text>
-      <Button title="Sign up" onPress={() => navigation.navigate("signup")} />
-      <Button title="Log in" onPress={() => navigation.navigate("login")} />
-      <Button title="Back to Home" onPress={() => navigation.goBack()} />
-    </View>
   );
 }
 
@@ -144,7 +134,6 @@ export default function Index() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="home" component={HomeScreen} />
-      <Stack.Screen name="account" component={AccountScreen} />
       <Stack.Screen name="signup" component={SignupScreen}/>
       <Stack.Screen name="login" component={LoginScreen}/>
       <Stack.Screen name="dashboard" component={Dashboard}/>
@@ -158,7 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: "center", 
     alignItems: "center",
     backgroundColor: "#fff",
-    padding: 50,
+    padding: 20,
   },
   containerTopleft: {
     flex: 1,
